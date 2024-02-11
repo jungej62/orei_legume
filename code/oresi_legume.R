@@ -211,11 +211,12 @@ ggsave("GrainRY2x.png", width=7, height=3.5, units="in", path="/Users/junge037/D
 ggplot(data=subset(sdat2, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x"),
        aes(x=legumeyld, y=g_ry))+
   geom_point(aes(shape=legtrt, color=timetrt))+
-  facet_grid(~yr)+
+  facet_grid(~yr, scales="free_x")+
   xlab("Legume biomass (kg/ha)") +
   ylab("Grain yield relative to 0 fert")+
   geom_hline(yintercept = 1, color="black")+
   geom_smooth(method='lm', formula=y ~ poly(x, 2), se=F)+
+  coord_cartesian(ylim=c(0,3))+
   ylim(0,3.5) +
   theme(panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),
@@ -226,7 +227,8 @@ ggplot(data=subset(sdat2, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1
         legend.key = element_rect(colour = "transparent", fill = NA),
         legend.text=element_text(size=10),
         legend.key.size = unit(6,"mm"),
-        legend.position=c(0.5,0.8),
+        legend.position="none",
+        #legend.position=c(0.5,0.8),
         legend.title=element_blank(),
         axis.text.y=element_text(size=10, color="black"),
         axis.title.y=element_text(size=10, color="black"),
@@ -234,7 +236,7 @@ ggplot(data=subset(sdat2, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1
         axis.title.x = element_blank(),
         axis.text.x=element_text(size=10, angle=45,
                                  hjust=0.95, color='black'))
-ggsave("LegumebiomassAgainstRelativeGrain.png", width=7, height=3.5, units="in", path="/Users/junge037/Documents/Projects/orei_legume/figures/")
+ggsave("LegumebiomassAgainstRelativeGrainv2.png", width=7, height=3.5, units="in", path="/Users/junge037/Documents/Projects/orei_legume/figures/")
 
 sdat2 %>% 
   group_by(yr, trt_code, trt, legtrt, timetrt) %>% 
