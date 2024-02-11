@@ -71,14 +71,19 @@ sdat2$timetrt<-factor(sdat2$timetrt, levels=c("fall","spring", "summer", "none")
 sdat2$fert<-factor(sdat2$fert, levels=c("0","0.5x", "1x", "2x", "none"))
 #Plot it
 pps = position_dodge(width = .75)
-sdat3<-summarySE(sdat2, "g_ry", c("yr", "trt_code", "trt", "legtrt", "timetrt"), na.rm=T)
-str(sdat3)
-ggplot(data=subset(sdat3, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x"), 
-       aes(x=legtrt, y=g_ry, color=timetrt)) + 
+#dplyr way
+sdat2 %>% 
+  group_by(yr, trt_code, trt, legtrt, timetrt) %>% 
+  summarise(sd_ry = sd(g_ry, na.rm=T), 
+            n_ry = n(),
+            g_ry = mean(g_ry, na.rm=T)) %>% #order matters if you want to keep the g_ry column name, must do mean after sd
+  mutate(se_ry=sd_ry/sqrt(n_ry)) %>%
+  filter(trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x") %>% 
+ggplot(aes(x=legtrt, y=g_ry, color=timetrt)) + 
   geom_point(size=1.5, position = pps)+#, stat="identity", position = pps) + 
   facet_grid(~yr) +
   geom_hline(yintercept = 1, color="black")+
-  geom_errorbar(aes(ymin=g_ry-se, ymax=g_ry+se), width=0.2, position = pps) +
+  geom_errorbar(aes(ymin=g_ry-se_ry, ymax=g_ry+se_ry), width=0.2, position = pps) +
   xlab("Treatment") +
   ylab("Grain yield relative to 0 fert")+
   ylim(0,3) +
@@ -101,13 +106,18 @@ ggplot(data=subset(sdat3, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1
                                  hjust=0.95, color='black'))
 ggsave("GrainRYcontrol.png", width=7, height=3.5, units="in", path="/Users/junge037/Documents/Projects/orei_legume/figures/")
 
-sdat4<-summarySE(sdat2, "g_ry.5", c("yr", "trt_code", "trt", "legtrt", "timetrt"), na.rm=T)
-ggplot(data=subset(sdat4, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x"), 
-       aes(x=legtrt, y=g_ry.5, color=timetrt)) + 
+sdat2 %>% 
+  group_by(yr, trt_code, trt, legtrt, timetrt) %>% 
+  summarise(sd_ry = sd(g_ry.5, na.rm=T), 
+            n_ry = n(),
+            g_ry.5 = mean(g_ry.5, na.rm=T)) %>% #order matters if you want to keep the g_ry column name, must do mean after sd
+  mutate(se_ry=sd_ry/sqrt(n_ry)) %>%
+  filter(trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x") %>% 
+  ggplot(aes(x=legtrt, y=g_ry.5, color=timetrt)) + 
   geom_point(size=1.5, position = pps)+#, stat="identity", position = pps) + 
   facet_grid(~yr) +
   geom_hline(yintercept = 1, color="black")+
-  geom_errorbar(aes(ymin=g_ry.5-se, ymax=g_ry.5+se), width=0.2, position = pps) +
+  geom_errorbar(aes(ymin=g_ry.5-se_ry, ymax=g_ry.5+se_ry), width=0.2, position = pps) +
   xlab("Treatment") +
   ylab("Grain yield relative to 0.5x fert")+
   ylim(0,3) +
@@ -130,13 +140,18 @@ ggplot(data=subset(sdat4, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1
                                  hjust=0.95, color='black'))
 ggsave("GrainRY.5x.png", width=7, height=3.5, units="in", path="/Users/junge037/Documents/Projects/orei_legume/figures/")
 
-sdat5<-summarySE(sdat2, "g_ry1", c("yr", "trt_code", "trt", "legtrt", "timetrt"), na.rm=T)
-ggplot(data=subset(sdat5, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x"), 
-       aes(x=legtrt, y=g_ry1, color=timetrt)) + 
+sdat2 %>% 
+  group_by(yr, trt_code, trt, legtrt, timetrt) %>% 
+  summarise(sd_ry = sd(g_ry1, na.rm=T), 
+            n_ry = n(),
+            g_ry1 = mean(g_ry1, na.rm=T)) %>% #order matters if you want to keep the g_ry column name, must do mean after sd
+  mutate(se_ry=sd_ry/sqrt(n_ry)) %>%
+  filter(trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x") %>% 
+ggplot(aes(x=legtrt, y=g_ry1, color=timetrt)) + 
   geom_point(size=1.5, position = pps)+#, stat="identity", position = pps) + 
   facet_grid(~yr) +
   geom_hline(yintercept = 1, color="black")+
-  geom_errorbar(aes(ymin=g_ry1-se, ymax=g_ry1+se), width=0.2, position = pps) +
+  geom_errorbar(aes(ymin=g_ry1-se_ry, ymax=g_ry1+se_ry), width=0.2, position = pps) +
   xlab("Treatment") +
   ylab("Grain yield relative to 1x fert")+
   ylim(0,3) +
@@ -159,13 +174,18 @@ ggplot(data=subset(sdat5, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1
                                  hjust=0.95, color='black'))
 ggsave("GrainRY1x.png", width=7, height=3.5, units="in", path="/Users/junge037/Documents/Projects/orei_legume/figures/")
 
-sdat6<-summarySE(sdat2, "g_ry2", c("yr", "trt_code", "trt", "legtrt", "timetrt"), na.rm=T)
-ggplot(data=subset(sdat6, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x"), 
-       aes(x=legtrt, y=g_ry2, color=timetrt)) + 
+sdat2 %>% 
+  group_by(yr, trt_code, trt, legtrt, timetrt) %>% 
+  summarise(sd_ry = sd(g_ry2, na.rm=T), 
+            n_ry = n(),
+            g_ry2 = mean(g_ry2, na.rm=T)) %>% #order matters if you want to keep the g_ry column name, must do mean after sd
+  mutate(se_ry=sd_ry/sqrt(n_ry)) %>%
+  filter(trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1x"&trt!="K+manure 2x") %>% 
+ggplot(aes(x=legtrt, y=g_ry2, color=timetrt)) + 
   geom_point(size=1.5, position = pps)+#, stat="identity", position = pps) + 
   facet_grid(~yr) +
   geom_hline(yintercept = 1, color="black")+
-  geom_errorbar(aes(ymin=g_ry2-se, ymax=g_ry2+se), width=0.2, position = pps) +
+  geom_errorbar(aes(ymin=g_ry2-se_ry, ymax=g_ry2+se_ry), width=0.2, position = pps) +
   xlab("Treatment") +
   ylab("Grain yield relative to 2x fert")+
   ylim(0,3) +
@@ -216,11 +236,16 @@ ggplot(data=subset(sdat2, trt!="K control"&trt!="K+manure 0.5x"&trt!="K+manure 1
                                  hjust=0.95, color='black'))
 ggsave("LegumebiomassAgainstRelativeGrain.png", width=7, height=3.5, units="in", path="/Users/junge037/Documents/Projects/orei_legume/figures/")
 
-sdat7<-summarySE(sdat2, "weedyld", c("yr", "trt_code", "trt", "legtrt", "timetrt"), na.rm=T)
-ggplot(data=sdat7, aes(x=trt, y=weedyld)) + 
+sdat2 %>% 
+  group_by(yr, trt_code, trt, legtrt, timetrt) %>% 
+  summarise(sd_ry = sd(weedyld, na.rm=T), 
+            n_ry = n(),
+            weedyld = mean(weedyld, na.rm=T)) %>% #order matters if you want to keep the g_ry column name, must do mean after sd
+  mutate(se_ry=sd_ry/sqrt(n_ry)) %>%
+  ggplot(aes(x=trt, y=weedyld)) + 
   geom_point(size=1.5, position = pps)+#, stat="identity", position = pps) + 
-  facet_grid(~yr, scales = "free_y") +
-  geom_errorbar(aes(ymin=weedyld-se, ymax=weedyld+se), width=0.2, position = pps) +
+  facet_wrap(~yr, scales = "free_y", ncol=1) +
+  geom_errorbar(aes(ymin=weedyld-se_ry, ymax=weedyld+se_ry), width=0.2, position = pps) +
   xlab("Treatment") +
   ylab("Weed biomass (kg/ha)")+
   #ylim(0,3) +
